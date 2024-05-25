@@ -61,6 +61,10 @@ public class Main {
 
 ![image](https://github.com/sunwon12/Today-I-Learn/assets/92251131/0bc80c5b-9fb0-4c51-bb1d-3a887f43431f)
 
+레드 블랙 트리 활용방식
+![image](https://github.com/sunwon12/Today-I-Learn/assets/92251131/15fe5d55-d145-4ee0-acde-82236f268d41)
+
+
 ### **리사이징**
 
  배열의 사이즈는 초기화 시 정해진다. 기본 생성자를 통해 HashMap을 생성한 후 put 메서드를 실행하면 기본사이즈인 **16 사이즈의 Node 배열**이 생성되고 **리사이징 임계 값으로 12(0.75\*16)가 결정**된다. 여기서 리사이징 임계값이란 배열을 리사이징하는 기준값을 뜻하며 **현재 배열길이의 두 배**로 리사이징한다. **12개를 초과할 경우 배열을 16의 2배인 32 사이즈로 리사이징 하는것이다.**
