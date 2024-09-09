@@ -1,6 +1,19 @@
+![image](https://github.com/user-attachments/assets/0521317e-e0b4-492c-85be-4be21413b5d7)## **#도입 이유**
+
+![image](https://github.com/user-attachments/assets/644e31f4-e338-4b34-8079-f7d1c31cd6d6)
+
+프로젝트 도중 프론트팀으로부터 메시지를 받았다. 서버가 다운 됐다는 내용이다. Spring 서버 에러 내용은 Slack으로 수신 받게 설정을 해두어 EC2 서버 모니터링에 대해서는 안일했었다. 지금은 프론트팀이 먼저 발견하여 연락을 주었지만, 실서비스를  운영하게 된다면 사용자가 먼저 서버 다운을 경험하게 될 것이다. 이는 서비스 신뢰도에 대한 하락 및 사용자 불편함이 증가한다는 것을 의미한다. 
+
+만약 서버에 문제가 생겼다면 여러 사용자가 접하기 전에 먼저 서버팀에서 인지하여 해결하는 것이 중요하므로 서버 모니터링을 도입하게 되었다.
+
+
+(위 문제에 대한 해결 내용은 아래 포스터에 적어두었다.)
+
+jsw5913.tistory.com](https://jsw5913.tistory.com/230
+
 ## **#모니터링 과정**
 
-[##_Image|kage@cPqYwz/btsJvp9ncKD/lLyc48TWPozwI0qSBRCHK1/img.png|CDM|1.3|{"originWidth":1111,"originHeight":200,"style":"alignCenter"}_##]
+![image](https://github.com/user-attachments/assets/967c0c97-2289-4f41-84be-a524c224faf9)
 
 CloudWatch에서 알람 발생 → SNS 푸시 서비스 호출 → Lambda 함수 트리거(환경변수를 위해 KMS 사용) → 연동된 Slack 채널로 알람 전송
 
@@ -16,37 +29,38 @@ CloudWatch에서 알람 발생 → SNS 푸시 서비스 호출 → Lambda 함수
 
 ## **1.슬랙 Webhook 생성**
 
-[##_Image|kage@J5hIm/btsJubkjKQO/iPvpD0dxI4SnRSb8248qKK/img.png|CDM|1.3|{"originWidth":709,"originHeight":665,"style":"alignCenter"}_##]
+![image](https://github.com/user-attachments/assets/40ca9c03-1222-46f0-8a35-8837fc9bd500)
 
 본 글에서 Webhook 생성 과정은 생략하겠다.
 
 ## **2\. Amzons SNS(Simple Notification Service)생성**
 
-[##_Image|kage@cUxK0R/btsJuFkW0D5/MI1Bnz23bgoHbv8XLno4j1/img.png|CDM|1.3|{"originWidth":952,"originHeight":677,"style":"alignCenter"}_##]
+![image](https://github.com/user-attachments/assets/d76a53ed-2d6f-4d4d-bc33-d976d8eb1212)
 
 ## **3\. Amzon Lambda 생성**
 
 #### **3-1 블루프린트 설정**
 
-[##_Image|kage@xvAZc/btsJvXEYptF/D6k5zpyGiMih8cNfbwRjU1/img.png|CDM|1.3|{"originWidth":826,"originHeight":815,"style":"alignCenter"}_##]
+![image](https://github.com/user-attachments/assets/dfc8288c-9344-4771-b0df-b189ae817a27)
 
 #### **3-2 SNS 트리거 설정**
 
-[##_Image|kage@AC2PM/btsJvSXQyPP/vfPXS3MTNo9zLboJWtO5p1/img.png|CDM|1.3|{"originWidth":847,"originHeight":333,"style":"alignCenter"}_##]
+![image](https://github.com/user-attachments/assets/344363e3-d865-4c84-a259-bb1967b3d271)
 
-#### **3-2 환경 변수 설정**
+#### **3-3 환경 변수 설정**
+
 
 slackChannel: ec2 모니터링 알림 받을 슬랙 채널명 입력
 
 kmsEncryptedHookUrl: 임시값 test 입력
 
-[##_Image|kage@bJ2WiY/btsJvVAokgV/1E1kr6WTnSDOjRqteKR1yK/img.png|CDM|1.3|{"originWidth":855,"originHeight":414,"style":"alignCenter"}_##]
+![image](https://github.com/user-attachments/assets/93455296-b005-4a7d-8000-1aa9d309a796)
 
-#### **3-3 WebhookURL 입력하기**
+#### **3-4 WebhookURL 입력하기**
 
 위와 같이설정해주면 미리 정의된 블루 프린트를 사용했기 때문에 아래와 같이 코드가 미리 입력되어있을 것이다. Lamda는 아래 코드와 같이 작동된다. 
 
-[##_Image|kage@WRQPt/btsJwdOekXz/fjjnQV2kEnOgd1JjIp4QnK/img.png|CDM|1.3|{"originWidth":1338,"originHeight":885,"style":"alignCenter"}_##]
+![image](https://github.com/user-attachments/assets/751ea0a7-a986-4bdf-ba44-ed1909dc92f5)
 
 **기존코드**
 
@@ -149,17 +163,17 @@ def lambda_handler(event, context):
         logger.error("Server connection failed: %s", e.reason)
 ```
 
-[##_Image|kage@sST7p/btsJvl64d2D/vfhB0IUos3gn81r7WD8p4k/img.png|CDM|1.3|{"originWidth":1309,"originHeight":569,"style":"alignCenter"}_##]
+![image](https://github.com/user-attachments/assets/f2b06bcd-dccc-4576-8b15-1fb74403345f)
 
 코드를 바꿨으니 환경변수도 바꿔줘야 한다. 
 
-[##_Image|kage@cFbupI/btsJwBBlygW/NcnKKkgwqClklfvXZkqViK/img.png|CDM|1.3|{"originWidth":1390,"originHeight":873,"style":"alignCenter"}_##]
+![image](https://github.com/user-attachments/assets/1418d860-d906-4e71-ae06-47e11cbd0590)
 
 #### **3-4 AWS Lamda 테스트**
 
 **아래 테스트 탭에 들어가 이벤트 JSON 아래 코드를 복붙해주고 테스트버튼을 누르면 된다.** 
 
-[##_Image|kage@zr4QN/btsJu9sjs3f/2JOk5JdYjA7i9Q54n2gBA1/img.png|CDM|1.3|{"originWidth":1321,"originHeight":709,"style":"alignCenter"}_##]
+![image](https://github.com/user-attachments/assets/3b71e0f0-3e13-4e5c-bb6c-5ecf7ba9d0a7)
 
 ```
 {
@@ -188,27 +202,27 @@ def lambda_handler(event, context):
 
 슬랙에 잘 전송된 것을 확인할 수 있다.
 
-[##_Image|kage@cgH4F7/btsJugMOZ7j/E6MUUN1yGAAAqZ9cO041b0/img.png|CDM|1.3|{"originWidth":707,"originHeight":662,"style":"alignCenter"}_##]
-
-slack으로 전송하려면 Lambda를 사용
+![image](https://github.com/user-attachments/assets/97d651c5-18ce-4e6f-ad36-34ada6beb676)
 
 ## **4\. AWS CloudWatch 생성**
 
-[##_Image|kage@pjIVG/btsJu8UpaTH/MvioKwEpVbC9oM8I5NLpA0/img.png|CDM|1.3|{"originWidth":1147,"originHeight":438,"style":"alignCenter"}_##][##_Image|kage@dpnnvo/btsJvnRmBFA/ukVRbpw2nCxM7rHoKV7o81/img.png|CDM|1.3|{"originWidth":1185,"originHeight":667,"style":"alignCenter"}_##][##_Image|kage@MsURV/btsJvTvGIOO/NKbFw2XKBRdXs8NodIMkaK/img.png|CDM|1.3|{"originWidth":1732,"originHeight":724,"style":"alignCenter"}_##]
+![image](https://github.com/user-attachments/assets/ce5130fa-a318-4ad2-83c3-8aef88c98c69)
+![image](https://github.com/user-attachments/assets/b0c3771b-7f22-4478-8201-1b9d6e1d1c37).
+![image](https://github.com/user-attachments/assets/2096a51c-9e4b-4621-a22a-7c94871af015)
 
 Ec2에서 추적할 지표 선택
 
-[##_Image|kage@bytocM/btsJuB3Qgj0/P0k8HhzKfEjzLhfsR9GS10/img.png|CDM|1.3|{"originWidth":929,"originHeight":841,"style":"alignCenter"}_##]
+![image](https://github.com/user-attachments/assets/8a32ef6f-f884-4d7c-ae0c-a93b1d889b72)
 
 트리거할 기준선 설정.
 
 난 1분 평균 cpu사용률리 80이 넘을 때 알림을 보내게 설정했다.
 
-[##_Image|kage@bY5CH8/btsJvQZ4crA/vt1U6yjgMOjJLvJbFQ6uS1/img.png|CDM|1.3|{"originWidth":924,"originHeight":863,"style":"alignCenter","filename":"blob"}_##]
+![image](https://github.com/user-attachments/assets/521944b7-5661-4307-9320-c1c1bde3203c)
 
 알림 보낼 AWS SNS 선택
 
-![](https://t1.daumcdn.net/keditor/emoticon/friends1/large/001.gif)
+![image](https://github.com/user-attachments/assets/93706047-7443-421f-9eda-480449584fd6)
 
 끝!
 
@@ -216,7 +230,7 @@ Ec2에서 추적할 지표 선택
 
 ## **#아쉬웠던 점**
 
-AWS CloudWath, SNS, Lamda, KMS 등 처음 접해보는 서비스였다. 그랬기에  시간비용을 생각하여 인터넷에 자료가 많이 나와있는데로 진행하였다. 나와있는 자료중 대부분이 
+AWS CloudWath, SNS, Lamda, KMS 등 처음 접해보는 서비스였다. 그랬기에  시간비용을 생각하여 인터넷에 자료가 많이 나와있는 방식대로 진행하였다. 나와있는 자료중 대부분이 
 
 CloudWatch에서 알람 발생 → SNS 푸시 서비스 호출 → Lambda 함수 트리거(환경변수를 위해 KMS 사용) → 연동된 Slack 채널로 알람 전송
 
@@ -232,10 +246,4 @@ CloudWatch에서 알람 발생 → Lambda 함수 호출 → 연동된 Slack 채�
 
 만약 간소화 버전으로 AWS CloudWatch를 설정하고 싶다면 아래 링크를 참조해봐도 좋을 것 같다.
 
-[https://www.smileshark.kr/post/lambda%EC%99%80-%EC%B9%9C%ED%95%B4%EC%A7%80%EB%8A%94-%EC%B2%AB%EA%B1%B8%EC%9D%8C-%EC%9E%A5%EC%95%A0-%ED%83%90%EC%A7%80-%EB%A7%8C%EB%93%A4%EA%B8%B0](https://www.smileshark.kr/post/lambda%EC%99%80-%EC%B9%9C%ED%95%B4%EC%A7%80%EB%8A%94-%EC%B2%AB%EA%B1%B8%EC%9D%8C-%EC%9E%A5%EC%95%A0-%ED%83%90%EC%A7%80-%EB%A7%8C%EB%93%A4%EA%B8%B0)
-
- [Lambda와 친해지는 첫걸음 - 장애 탐지 만들기
-
-들어가며: 처음 접하는 AWS Lambda많은 사람들이 AWS를 처음 접하는 서비스로 Lambda를 선택하지 않습니다.AWS Lambda는 서버를 준비(프로비저닝)하거나 관리할 필요 없이 사용할 수 있는 서비스 입니다.
-
-www.smileshark.kr](https://www.smileshark.kr/post/lambda%EC%99%80-%EC%B9%9C%ED%95%B4%EC%A7%80%EB%8A%94-%EC%B2%AB%EA%B1%B8%EC%9D%8C-%EC%9E%A5%EC%95%A0-%ED%83%90%EC%A7%80-%EB%A7%8C%EB%93%A4%EA%B8%B0)
+(https://www.smileshark.kr/post/lambda%EC%99%80-%EC%B9%9C%ED%95%B4%EC%A7%80%EB%8A%94-%EC%B2%AB%EA%B1%B8%EC%9D%8C-%EC%9E%A5%EC%95%A0-%ED%83%90%EC%A7%80-%EB%A7%8C%EB%93%A4%EA%B8%B0)
