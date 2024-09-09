@@ -1,4 +1,4 @@
-![image](https://github.com/user-attachments/assets/0521317e-e0b4-492c-85be-4be21413b5d7)## **#도입 이유**
+## **#도입 이유**
 
 ![image](https://github.com/user-attachments/assets/644e31f4-e338-4b34-8079-f7d1c31cd6d6)
 
