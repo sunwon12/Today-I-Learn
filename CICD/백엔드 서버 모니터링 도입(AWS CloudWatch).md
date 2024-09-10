@@ -129,6 +129,7 @@ import logging
 import os
 from urllib.request import Request, urlopen
 from urllib.error import URLError, HTTPError
+from datetime import datetime, timezone, timedelta
 
 # The Slack webhook URL stored directly in the environment variable
 HOOK_URL = os.environ['slackWebhookUrl']
@@ -146,10 +147,21 @@ def lambda_handler(event, context):
     alarm_name = message['AlarmName']
     new_state = message['NewStateValue']
     reason = message['NewStateReason']
+    state_change_time = message['StateChangeTime']
+
+    # UTC 시간을 한국 시간으로 변환
+    utc_time = datetime.strptime(state_change_time, "%Y-%m-%dT%H:%M:%S.%fZ")
+    korea_time = utc_time.replace(tzinfo=timezone.utc).astimezone(timezone(timedelta(hours=9)))
+    korea_time_str = korea_time.strftime("%Y-%m-%d %H:%M:%S")
 
     slack_message = {
         'channel': SLACK_CHANNEL,
-        'text': "%s state is now %s: %s" % (alarm_name, new_state, reason)
+        'text': (
+            "*알람 이름*: %s\n"
+            "*상태*: %s\n"
+            "*원인*: %s\n"
+            "*발생 시각*: %s (한국 시간)"
+        ) % (alarm_name, new_state, reason, korea_time_str)
     }
 
     req = Request(HOOK_URL, json.dumps(slack_message).encode('utf-8'))
@@ -161,6 +173,7 @@ def lambda_handler(event, context):
         logger.error("Request failed: %d %s", e.code, e.reason)
     except URLError as e:
         logger.error("Server connection failed: %s", e.reason)
+
 ```
 
 ![image](https://github.com/user-attachments/assets/f2b06bcd-dccc-4576-8b15-1fb74403345f)
