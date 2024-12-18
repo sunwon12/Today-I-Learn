@@ -9,7 +9,7 @@
 
 **[https://www.acmicpc.net/problem/9663](https://www.acmicpc.net/problem/9663)**
 
-[##_Image|kage@zDuli/btsLmkmhe16/8EKju0MirXp8zzdT820yk1/img.png|CDM|1.3|{"originWidth":2300,"originHeight":1532,"style":"alignCenter"}_##]
+![image](https://github.com/user-attachments/assets/9651e83f-5caa-490e-a45a-090f11c052cd)
 
 ## **2\. 문제 풀이**
 
