@@ -1,6 +1,7 @@
 ## **CORS는 왜 필요한가요?**
 
 ---
+<img width="743" alt="image" src="https://github.com/user-attachments/assets/bfa06346-5715-4c9b-8cef-b7ce5fd342be" />
 
 CORS(Cross-Origin Resource Sharing)는 보안상의 이유로 웹 브라우저가 **다른 출처(도메인, 프로토콜, 포트)의 리소스에 접근하는 요청을 제한**하기 위해 만들어졌습니다.
 
