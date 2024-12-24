@@ -1,0 +1,143 @@
+### **Docker, Docker Compose 설치:**
+
+```java
+# Docker 설치
+sudo apt install docker.io -y
+
+# Docker 시작
+sudo systemctl start docker
+
+# Docker 자동 시작 설정
+sudo systemctl enable docker
+
+# 사용자 권한 설정
+sudo usermod -aG docker ubuntu
+
+# 현재 세션에 새로운 그룹(docker) 권한을 적용하는 명령어
+newgrp docker
+
+# 기존 버전 제거
+sudo apt remove docker-compose
+
+# 새 버전 설치
+sudo curl -L "https://github.com/docker/compose/releases/download/v2.23.0/docker-compose-linux-x86_64" -o /usr/bin/docker-compose
+
+sudo chmod +x /usr/local/bin/docker-compose
+
+# 버전 확인
+docker-compose --version
+```
+
+**Docker 명령어**
+
+```
+# 띄워져 있는 컨테이너 확인
+docker-compose ps
+
+# 모든 것을 깨끗이 정리
+#Docker Compose가 생성한 모든 볼륨도 함께 삭제됩니다. 볼륨은 데이터 지속성을 위해 사용되며, 컨테이너#가 삭제되더라도 데이터가 유지됩니다. 이 옵션을 사용하면 이러한 볼륨도 함께 제거되어 데이터가 완전히 삭제#됩니다.
+docker-compose down -v
+
+# detached(분리모드/ 백그라운드)로 컨테이너 실행
+docker-compose up -d
+
+# 5분 이내에 로그 보기
+docker logs --since 5m <컨테이너명>
+
+# 도커 네트워크 상태 확인
+docker network inspect book-network
+
+```
+
+### **구조**
+
+```java
+docker/
+├── docker-compose.yml    # 루트 디렉토리에 메인 docker-compose 파일
+├── main-server/
+│   └── Dockerfile       # 메인 서버용 Dockerfile
+└── notification-server/
+    └── Dockerfile       # 알림 서버용 Dockerfile
+```
+
+### **처음 mysql 컨테이너 띄우기**
+
+```java
+docker run -d \
+ --name mysql \
+ -e MYSQL_ROOT_PASSWORD=root \
+ -e MYSQL_DATABASE=book \
+ -e MYSQL_USER=book \
+ -e MYSQL_PASSWORD=book \
+ -p 3306:3306 \
+ mysql:8.0
+```
+
+**mysql 외부접속 권한 부여**
+
+```java
+# 사용자 생성
+CREATE USER 'book'@'%' IDENTIFIED BY 'book';
+
+# 권한 부여
+GRANT ALL PRIVILEGES ON *.* TO 'book'@'%';
+
+# 권한 적용
+FLUSH PRIVILEGES;
+
+//or 
+
+# 사용자 수정
+ALTER USER 'book'@'%' IDENTIFIED WITH mysql_native_password BY 'book';
+
+# 권한 적용
+FLUSH PRIVILEGES;
+
+```
+
+**스왑 메모리 관련**
+
+```java
+#메모리 공간 확인
+top
+
+#스왑 파일을 생성합니다
+sudo dd if=/dev/zero of=/swapfile bs=1M count=2048
+
+#스왑 파일 권한 부여
+sudo chmod 600 /swapfile
+
+#스왑 파일 활성화
+sudo mkswap /swapfile
+sudo swapon /swapfile
+
+#부팅 시 자동으로 스왑 파일이 활성화되도록 설정
+echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
+
+```
+
+```java
+# application.yml이 JAR 파일 안에 제대로 포함되어 있는지 확인
+jar tf main-server-0.0.1-SNAPSHOT.jar | grep application.yml
+
+# JAR 파일 내부의 application.yml 내용도 확인
+	jar xf main-server-0.0.1-SNAPSHOT.jar BOOT-INF/classes/application.yml
+	cat BOOT-INF/classes/application.yml
+
+#컨테이너 실행 시 환경변수나 추가 설정이 있는지도 확인
+docker inspect main-server
+
+```
+
+```java
+# MySQL 컨테이너에 접속
+docker exec -it mysql mysql -u root -proot
+
+# MySQL 접속 후 실행할 명령어들:
+SELECT user, host FROM mysql.user;               # 사용자 목록 확인
+SHOW GRANTS FOR 'book'@'%';                     # book 사용자 권한 확인
+
+# 필요한 경우 권한 부여
+GRANT ALL PRIVILEGES ON book.* TO 'book'@'%';
+FLUSH PRIVILEGES;
+```
