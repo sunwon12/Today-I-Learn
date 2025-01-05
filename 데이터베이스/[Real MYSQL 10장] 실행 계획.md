@@ -280,27 +280,8 @@ GROUP BY e.hire_date \G
 
 **출력 결과 (TREE 포맷)**
 
-```sql
-A) -> Table scan on <temporary> (actual time=0.001..0.004 rows=48 loops=1)
+![image](https://github.com/user-attachments/assets/8d311e82-1029-47a1-9b65-15b054590670)
 
-B)     -> Aggregate using temporary table (actual time=3.799..3.808 rows=48 loops=1)
-
-C)         -> Nested loop inner join (cost=685.24 rows=135)
-                   (actual time=0.367..3.602 rows=48 loops=1)
-
-D)             -> Index lookup on e using ix_firstname (first_name='Matt') (cost=215.08 rows=233)
-                         (actual time=0.348..1.046 rows=233 loops=1)
-
-E)             -> Filter: ((s.salary > 50000)
-                           AND (s.from_date <= DATE '1990-01-01')
-                           AND (s.to_date > DATE '1990-01-01'))
-                           (cost=0.98 rows=1)
-                   (actual time=0.009..0.011 rows=0 loops=233)
-
-F)                 -> Index lookup on s using PRIMARY (emp_no=e.emp_no) (cost=0.98 rows=10)
-                         (actual time=0.007..0.009 rows=10 loops=233)
-
-```
 
 ### **TREE 포맷 해석 규칙**
 
