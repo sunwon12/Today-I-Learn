@@ -65,7 +65,7 @@ JVM이 GC를 실행하기 위해 애플리케이션의 모든 쓰레드를 멈�
 
 G1 GC는 **Region 기반 메모리 관리**를 도입했습니다. 메모리를 고정 크기의 Region으로 나누고, **가비지가 많은 영역**을 우선적으로 수집하는 방식입니다. 
 
-![image.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/b37f3ff4-00a6-4b4a-87d4-0c501c430e3f/76342920-1a48-43af-8fb0-99d7250ff51b/image.png)
+![image](https://github.com/user-attachments/assets/5561f57c-00b4-4814-999f-7bee3ae475e6)
 
 - 빨강색 : Young 영역(Eden)
 - 빨강색 + S : Young 영역 (Survivor)
