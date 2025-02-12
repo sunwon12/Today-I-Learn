@@ -9,9 +9,9 @@
 
 ![image](https://github.com/sunwon12/Today-I-Learn/assets/92251131/73dd7add-c955-4d62-b22a-18c59ecc0cb7)
 
-### **1 번째 시도**   
+### **풀이**   
+<img width="455" alt="image" src="https://github.com/user-attachments/assets/07045852-6e07-4546-9beb-33b156dbcc04" />
 
--   
 
 ```
 import java.io.BufferedReader;
